@@ -1,0 +1,76 @@
+# Import socket needed for creating a socket connection and sys for various sys functions including termination
+import socket
+import sys
+
+# Define server IP address/hostname and port number
+def server(host, port):
+
+    # Socket creating with error if unsuccessful
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        print("Socket successfully created")
+    except socket.error as err:
+        print(f"Socket creation failed with error: {err}")
+        sys.exit(1)
+
+    # Bind the socket to the address and port with error codes if unsuccessful
+    # Prints each step to ensure proper coding
+    try:
+        s.bind((host, port))
+        print(f"Socket bound to {host} on port {port}")
+    except socket.error as err:
+        print(f"Bind failed with error: {err}")
+        s.close()
+        sys.exit(1)
+
+    # Listen for incoming connections
+    s.listen()
+    print("Socket is listening...")
+    print("Press Ctrl+C to stop the server")
+
+    try:
+        while True:
+            # Creates a timeout
+            s.settimeout(1.0)
+            
+            try:
+                # Waiting for an incoming connection
+                conn, addr = s.accept()
+                with conn:
+                    print(f"Got connection from {addr}")
+
+                    # Receive data from the client
+                    data = conn.recv(1024)
+                    if not data:
+                        print("No data received, closing connection.")
+                        break
+                    
+                    print(f"Received: '{data.decode()}'")
+
+                    # Send a response back to the client
+                    response = "Message received."
+                    conn.sendall(response.encode())
+                    print(f"Sent: '{response}'")
+                
+            # Allows the timeout function to continue to KeyboardInterrupt
+            except socket.timeout:
+                continue
+
+    # Ctrl+C to interrupt the process and shut down
+    except KeyboardInterrupt:
+        print("\nServer is shutting down.")
+    except socket.error as err:
+        print(f"Error during communication: {err}")
+    finally:
+        # Closing the socket
+        print("Closing socket...")
+        s.close()
+        print("Server shutdown complete.")
+
+if __name__ == '__main__':
+    # Define the server address
+    server_host = '192.168.1.78'
+    # Define the port number being used
+    server_port = 5000
+
+    server(server_host, server_port)

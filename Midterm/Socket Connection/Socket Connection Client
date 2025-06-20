@@ -1,0 +1,51 @@
+# Import socket needed for creating a socket connection and sys for various sys functions including termination
+import socket
+import sys
+
+# Define IP address/hostname and port number
+def client(host, port):
+
+    # Socket creating with error if unsuccessful
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        print("Socket successfully created")
+    except socket.error as err:
+        print(f"Socket creation failed with error: {err}")
+        sys.exit(1)
+
+    # Connection to server with errors if unsuccessful
+    try:
+        s.connect((host, port))
+        print(f"Successfully connected to server {host} on port {port}")
+    except socket.error as err:
+        print(f"Connection error: {err}")
+        s.close()
+        sys.exit(1)
+
+    # Sending data to server with errors if unsuccessful
+    # Prints each step to ensure proper coding
+    try:
+        # Send data to the server
+        message = "Hello!"
+        print(f"Sending: {message}")
+        s.sendall(message.encode())
+
+        # Receive data from the server
+        data = s.recv(1024)
+        print(f"Received: '{data.decode()}'")
+
+    except socket.error as err:
+        print(f"Error during communication: {err}")
+    finally:
+        # Close the connection after completion
+        print("Closing connection")
+        s.close()
+
+if __name__ == '__main__':
+    # Define the server address
+    server_host = '192.168.1.78'  
+    # Define the port used by the server
+    server_port = 5000       
+
+    client(server_host, server_port)
+    
