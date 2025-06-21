@@ -25,8 +25,8 @@ def server(host, port):
 
     # Listen for incoming connections
     s.listen()
-    print("Socket is listening...")
-    print("Press Ctrl+C to stop the server")
+    print("Socket is listening.")
+    print("Press Ctrl+C to stop the server.")
 
     try:
         while True:
@@ -63,7 +63,7 @@ def server(host, port):
         print(f"Error during communication: {err}")
     finally:
         # Closing the socket
-        print("Closing socket...")
+        print("Closing socket.")
         s.close()
         print("Server shutdown complete.")
 

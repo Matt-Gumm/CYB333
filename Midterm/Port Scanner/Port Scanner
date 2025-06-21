@@ -1,0 +1,71 @@
+# Import socket needed for creating a socket connection and sys for various sys functions including termination
+# Import datetime for calculating time spent running the program
+import errno
+import socket
+import sys
+from datetime import datetime
+
+# Inputs with error handling
+def inputs():
+    try:
+        # Inputs
+        target = input("Enter a host to scan: ")
+        ports = input("Select the port range to scan (Example: 1 80 or common ports): ")
+        targetIP = socket.gethostbyname(target)
+    except socket.error as err:
+        print(f"Hostname error: {err}")
+        sys.exit()
+
+    # Define common ports
+    common_ports = [21, 22, 23, 25, 53, 80, 110, 143, 443]
+
+    # Parse port input
+    if ports.lower() == "common ports":
+        start_port = min(common_ports)
+        end_port = max(common_ports)
+        ports_to_scan = common_ports
+    else:
+        try:
+            port_range = ports.split()
+            start_port = int(port_range[0])
+            end_port = int(port_range[1])
+            ports_to_scan = range(start_port, end_port + 1)
+        except:
+            print("Invalid input. Using common ports.")
+            start_port = min(common_ports)
+            end_port = max(common_ports)
+            ports_to_scan = common_ports
+    
+    return targetIP, ports_to_scan
+
+#Scanning the ports with error handling
+def main():
+    # Get inputs
+    targetIP, ports_to_scan = inputs()
+    
+    # Start time of the scanner
+    t1 = datetime.now()
+    # Function for scanning ports displaying open and closed ports
+    try:
+        for port in ports_to_scan:
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            result = s.connect_ex((targetIP, port))
+            if result == 0:
+                print("Port {}: Open".format(port))
+            else:
+                print("Port {}: Closed".format(port))    
+            s.close()
+
+        # End time of the scanner
+        t2 = datetime.now()
+        total = t2 - t1
+        print('Scanning completed: ', total)
+    
+    #Error Handling
+    except KeyboardInterrupt:
+        print("\nScan interrupted.")
+    except Exception as e:
+        print(f"Error: {e}")
+
+if __name__ == "__main__":
+    main()
