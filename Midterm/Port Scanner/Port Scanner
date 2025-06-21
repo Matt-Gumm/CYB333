@@ -1,6 +1,5 @@
 # Import socket needed for creating a socket connection and sys for various sys functions including termination
 # Import datetime for calculating time spent running the program
-import errno
 import socket
 import sys
 from datetime import datetime
